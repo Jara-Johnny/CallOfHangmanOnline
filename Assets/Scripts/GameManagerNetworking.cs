@@ -225,6 +225,8 @@ public class GameManagerNetworking : MonoBehaviour
         if (players[playerInTurn].errorsCount >= 10)
         {
             Debug.Log("You Lose");
+            players[playerInTurn].CmdSetErrorsServer(players[localPlayerIndentity].errorsCount);
+            StartCoroutine(WaitPlayersEnd());
         }
 
         for (int i = 0; i < players[otherPlayerIndex].wordCharsArray.Length; i++)
@@ -253,7 +255,23 @@ public class GameManagerNetworking : MonoBehaviour
             players[otherPlayerIndex].wordCharsArray.Length)
         {
             Debug.Log("You Win");
+            players[localPlayerIndentity].CmdSetErrorsServer(players[localPlayerIndentity].errorsCount);
+            StartCoroutine(WaitPlayersEnd());
         }
+    }
+
+    public IEnumerator WaitPlayersEnd ()
+    {
+     while(true)
+     {
+         if(players[0].isFinished && players[1].isFinished)
+        {
+            Debug.Log("Set final screen");
+            UIFacade.Singleton.UpdateWinScreen();
+            break;
+        }
+         yield return new WaitForSeconds(1f);
+     }
     }
 
     private void NextTurn()

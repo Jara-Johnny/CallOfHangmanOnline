@@ -18,7 +18,11 @@ public class PlayerNetworking : NetworkBehaviour {
         get; private set;
     }
 
-    public int errorsCount
+    
+    public int errorsCount;
+   
+
+    public bool isFinished
     {
         get; private set;
     }
@@ -159,6 +163,20 @@ public class PlayerNetworking : NetworkBehaviour {
         }
     }
 
+    [Command]
+    public void CmdSetErrorsServer(int errorsNum)
+    {
+        RpcSetErrorsServer(errorsNum);
+    }
+
+    [ClientRpc]
+    public void RpcSetErrorsServer(int errorsNum)
+    {   
+        errorsCount = errorsNum;
+        isFinished = true;
+        Debug.Log(string.Format("Player {0} have {1} errors",index,errorsCount));
+    }
+
     public IEnumerator ChekForWordsInPlayers ()
     {
      while(true)
@@ -166,6 +184,7 @@ public class PlayerNetworking : NetworkBehaviour {
          if(GameManagerNetworking.Singleton.players[0].word!=""&&GameManagerNetworking.Singleton.players[1].word!="")
         {
             UIFacade.Singleton.SetActiveLocalMultiplayerScreen(0, false);
+            UIFacade.Singleton.SetActiveLocalMultiplayerScreen(2,false);
             UIFacade.Singleton.SetActiveLocalMultiplayerScreen(1, true);
             break;
         }
@@ -180,11 +199,18 @@ public class PlayerNetworking : NetworkBehaviour {
         CmdSetWord(word);
 
         if(isLocalPlayer)
+        {
             StartCoroutine(ChekForWordsInPlayers());
+            UIFacade.Singleton.SetActiveLocalMultiplayerScreen(0,false);
+            UIFacade.Singleton.SetActiveLocalMultiplayerScreen(2,true);
+        }
+            
 
         Debug.Log(string.Format("Player {0} word: {1}", index, word));
 
     }
+
+    
 
     
 

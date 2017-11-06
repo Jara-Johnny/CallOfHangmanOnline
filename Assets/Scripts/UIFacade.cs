@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 public class UIFacade : MonoBehaviour {
@@ -43,6 +44,13 @@ public class UIFacade : MonoBehaviour {
     public Text localMultiplayerInfo;
     public Text playerOneErrors;
     public Text playerTwoErrors;
+
+    [Header ("WinScreen")] [Space(10f)]
+
+    public Text[] playersErros;
+    public Text[] playersWordsWinScreen;
+
+    public GameObject winScreen;
 
     public GameObject onlineWaitingScreen;
 
@@ -155,6 +163,24 @@ public class UIFacade : MonoBehaviour {
     {
        /* wordInputField.text = "";
         letterInputField.text = "";*/
+    }
+
+    public void UpdateWinScreen()
+    {   
+        modeLocalMultiplayer.SetActive(false);
+        winScreen.SetActive(true);
+
+        playersErros[0].text = string.Format("Player 1 errors: {0}/10",GameManagerNetworking.Singleton.players[0].errorsCount);
+        playersErros[1].text = string.Format("Player 2 errors: {0}/10",GameManagerNetworking.Singleton.players[1].errorsCount);
+
+        playersWordsWinScreen[0].text = string.Format("{0}",GameManagerNetworking.Singleton.players[0].word);
+        playersWordsWinScreen[1].text = string.Format("{0}",GameManagerNetworking.Singleton.players[1].word);
+
+    }
+
+    public void ResetScene()
+    {
+        SceneManager.LoadScene(0);
     }
 
     private char ValidateChar(char charToValidate)
