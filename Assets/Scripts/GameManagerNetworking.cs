@@ -189,8 +189,17 @@ public class GameManagerNetworking : MonoBehaviour
 
         int otherPlayerIndex = (playerInTurn == 0) ? 1 : 0;
 
+        char playerChar = UIFacade.Singleton.currentInputFieldText[0];
+
+        if(players[playerInTurn].charsSelected.Contains(playerChar))
+            return;
+        else
+            players[playerInTurn].charsSelected.Add(playerChar); 
+
         Dictionary<int, char> correctChars = 
-            players[otherPlayerIndex].CheckForCharsInWord(UIFacade.Singleton.currentInputFieldText[0]);
+            players[otherPlayerIndex].CheckForCharsInWord(playerChar);
+
+            
 
         if (correctChars.Count == 0)
         {

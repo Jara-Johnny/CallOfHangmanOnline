@@ -24,6 +24,8 @@ public class PlayerNetworking : NetworkBehaviour {
     }
 
     public char[] wordCharsArray;
+
+    public List<char> charsSelected = new List<char>();
     /*{
         get; private set;
     }*/
@@ -194,7 +196,11 @@ public class PlayerNetworking : NetworkBehaviour {
         for (int i = 0; i < wordCharsArray.Length; i++)
         {
             if (inputChar == wordCharsArray[i])
+            {
                 charsInWord.Add(i, wordCharsArray[i]);
+                //wordCharsArray[i] = '';
+            }
+                
         }
 
         return charsInWord;
