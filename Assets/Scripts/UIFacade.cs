@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+using Networking;
 
 public class UIFacade : MonoBehaviour {
 
@@ -11,48 +10,46 @@ public class UIFacade : MonoBehaviour {
     [SerializeField]
     private GameObject mainMenu;
     [SerializeField]
-    private GameObject modeSingleplayer;
-    [SerializeField]
     private GameObject modeLocalMultiplayer;
     [SerializeField]
     private GameObject modeOnlineMultiplayer;
+    [SerializeField]
+    private GameObject readme;
 
     [Space(10F)]
 
-    [SerializeField]
-    private GameObject[] singleplayerScreens;
     [SerializeField]
     private GameObject[] localMultiplayerScreens;
     [SerializeField]
     private GameObject[] onlineMultiplayerScreens;
 
-    [Header("Input Fields")] [Space(10f)]
+    [Space(10f)] [Header("Input Fields")]
 
     [SerializeField]
     private InputField wordInputField;
     [SerializeField]
     private InputField letterInputField;
 
-    [Header("Player Text")] [Space(10f)]
-
-    public GameObject[] playersWords;
-    public Text[] playerOneEmptyTexts;
-    public Text[] playerTwoEmptyTexts;
-
-    [Header("Others")] [Space(10f)]
+    [Space(10f)] [Header("Game Screen")]
 
     public Text localMultiplayerInfo;
     public Text playerOneErrors;
     public Text playerTwoErrors;
 
-    [Header ("WinScreen")] [Space(10f)]
+    [Space(10f)] [Header("WinScreen")]
 
-    public Text[] playersErros;
-    public Text[] playersWordsWinScreen;
+    [SerializeField]
+    private Text playerWinner;
+    [SerializeField]
+    private Text[] playersWords;
+    [SerializeField]
+    private Text[] playersErros;
 
-    public GameObject winScreen;
+    [Space(10f)] [Header("Others")]
 
-    public GameObject onlineWaitingScreen;
+    public GameObject[] playersWordsObject;
+    public Text[] playerOneEmptyTexts;
+    public Text[] playerTwoEmptyTexts;
 
     [HideInInspector]
     public string currentInputFieldText;
@@ -88,16 +85,14 @@ public class UIFacade : MonoBehaviour {
         //Subscribing to the input field events
         Observer.Singleton.onWordInputFieldEnter += ClearInputFields;
         Observer.Singleton.onLetterInputFieldEnter += ClearInputFields;
+
+        //Subscribing to the readme events
+        Observer.Singleton.onReadme += DoneReadme;
     }
 
     public void SetActiveMainMenu(bool state)
     {
         mainMenu.SetActive(state);
-    }
-
-    public void SetActiveSingleplayer(bool state)
-    {
-        modeSingleplayer.SetActive(state);
     }
 
     public void SetActiveLocalMultiplayer(bool state)
@@ -108,14 +103,6 @@ public class UIFacade : MonoBehaviour {
     public void SetActiveOnlineMultiplayer(bool state)
     {
         modeOnlineMultiplayer.SetActive(state);
-    }
-
-    public void SetActiveSingleplayerScreen(int screen, bool state)
-    {
-        if (screen < 0 || screen > singleplayerScreens.Length - 1)
-            return;
-
-        singleplayerScreens[screen].SetActive(state);
     }
 
     public void SetActiveLocalMultiplayerScreen(int screen, bool state)
@@ -132,11 +119,6 @@ public class UIFacade : MonoBehaviour {
             return;
 
         onlineMultiplayerScreens[screen].SetActive(state);
-    }
-
-    public void SetActiveOnlineWaitingScreen(bool state)
-    {
-        onlineWaitingScreen.SetActive(state);
     }
 
     public void OnWordInputFieldEndEdit(string value)
@@ -161,26 +143,34 @@ public class UIFacade : MonoBehaviour {
 
     public void ClearInputFields()
     {
-       /* wordInputField.text = "";
-        letterInputField.text = "";*/
+        /*
+        wordInputField.text = "";
+        letterInputField.text = "";
+        */
     }
 
     public void UpdateWinScreen()
     {   
-        modeLocalMultiplayer.SetActive(false);
-        winScreen.SetActive(true);
+        SetActiveLocalMultiplayerScreen(3, true);
 
-        playersErros[0].text = string.Format("Player 1 errors: {0}/10",GameManagerNetworking.Singleton.players[0].errorsCount);
-        playersErros[1].text = string.Format("Player 2 errors: {0}/10",GameManagerNetworking.Singleton.players[1].errorsCount);
+        playersErros[0].text = string.Format("Player 1 errors: {0}/10", GameManagerNetworking.Singleton.players[0].errorsCount);
+        playersErros[1].text = string.Format("Player 2 errors: {0}/10", GameManagerNetworking.Singleton.players[1].errorsCount);
 
-        playersWordsWinScreen[0].text = string.Format("{0}",GameManagerNetworking.Singleton.players[0].word);
-        playersWordsWinScreen[1].text = string.Format("{0}",GameManagerNetworking.Singleton.players[1].word);
-
+        playersWords[0].text = string.Format("{0}", GameManagerNetworking.Singleton.players[0].word);
+        playersWords[1].text = string.Format("{0}", GameManagerNetworking.Singleton.players[1].word);
     }
 
-    public void ResetScene()
+    public void Done()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public void DoneReadme()
+    {
+        if (readme.activeInHierarchy)
+            readme.SetActive(false);
+        else
+            readme.SetActive(true);
     }
 
     private char ValidateChar(char charToValidate)
@@ -190,5 +180,4 @@ public class UIFacade : MonoBehaviour {
 
         return char.ToUpper(charToValidate);
     }
- 
 }

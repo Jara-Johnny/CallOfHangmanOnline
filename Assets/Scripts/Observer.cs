@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Observer : MonoBehaviour {
 
     //Actions
-    public Action onSingleplayer;
-    public Action onLocalMultiplayer;
     public Action onOnlineMultiplayer;
     public Action onReadme;
 
@@ -29,22 +25,6 @@ public class Observer : MonoBehaviour {
             DestroyImmediate(gameObject);
         else
             Singleton = this;
-    }
-
-    public void Singleplayer()
-    {
-        Debug.Log("Singleplayer");
-
-        if (onSingleplayer != null)
-            onSingleplayer();
-    }
-
-    public void LocalMultiplayer()
-    {
-        Debug.Log("LocalMultiplayer");
-
-        if (onLocalMultiplayer != null)
-            onLocalMultiplayer();
     }
 
     public void OnlineMultiplayer()

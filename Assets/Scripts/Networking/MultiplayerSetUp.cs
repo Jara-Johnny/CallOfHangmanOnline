@@ -1,46 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Networking;
 
-public class MultiplayerSetUp : MonoBehaviour {
+public class MultiplayerSetup : MonoBehaviour {
 
-	public CustomNetworkManager myNetworkManager;
+	public NetworkManager myNetworkManager;
 
-	public GameObject OnlineMultiplayerCanvas;
-	
-	void Start()
-	{
-		Observer.Singleton.onOnlineMultiplayer += ModeSelected;
-	}
-
-	public void ModeSelected()
-	{
-	
-	}
-
-	public void StartHostingMadafaca()
+	public void StartBeingHosting()
 	{
 		myNetworkManager.StopClient();
 		myNetworkManager.StartHost();
 
-		OnlineMultiplayerCanvas.SetActive(false);
+        UIFacade.Singleton.SetActiveOnlineMultiplayer(false);
+        UIFacade.Singleton.SetActiveLocalMultiplayer(true);
 	}
-
 
 	public void StartBeingClient()
 	{
-		
 		myNetworkManager.StopHost();
 		myNetworkManager.StopClient();
 		myNetworkManager.StartClient();
 
-		OnlineMultiplayerCanvas.SetActive(false);
-
-		//UIFacade.Singleton.SetActiveLocalMultiplayer(false);
-		//UIFacade.Singleton.SetActiveOnlineMultiplayerScreen(1,true);
-		
-	}
-
-
+        UIFacade.Singleton.SetActiveOnlineMultiplayer(false);
+        UIFacade.Singleton.SetActiveLocalMultiplayer(true);
+    }
 }
